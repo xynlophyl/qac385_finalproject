@@ -43,151 +43,151 @@ Each row represents a team’s statistics in a given match. In a given match, th
 
 
 
-#### Variable Descriptions
-
-season: Soccer season (year)
+#### Variable Descriptions (column: description (additional info [format/type])
     
-    team: Team name 
+    season: Soccer season [yyyy_yyyy]
     
-    date: Date of match 
+    team: Team name [str]
     
-    time: Start time of match 
+    date: Date of match [yy-mm-dd] 
     
-    comp: Soccer league  
+    time: Start time of match [hh-mm-ss] 
     
-    gameweek: Matchweek of season (numerical) 
+    comp: Soccer league [str]
     
-    day: Day of match 
+    gameweek: Matchweek of season ['Matchweek' 1-38] 
     
-    venue: Home or away game 
+    day: Day of match [ddd]
     
-    result: Outcome of game (W/L) 
+    venue: Home or away game [Home/Away]
     
-    gf: Goals for (scored by team in team var column) 
+    result: Outcome of game [W/L] 
     
-    ga: Goals against (scored by opponent)
+    gf: Goals for (scored by team in team var column) [int]
     
-    opponent: Opposition team
+    ga: Goals against (scored by opponent) [int]
     
-    xg: Expected goals (includes penalties but not penalty shootout) 
+    opponent: Opposition team [str]
     
-    xga: Expected opposition goals (includes penalties but not penalty shootout) 
+    xg: Expected goals (includes penalties but not penalty shootout) [float]
     
-    poss: Possession (calculated as the percentage of passes attempted) 
+    xga: Expected opposition goals (includes penalties but not penalty shootout) [float]
     
-    attendance: Number of fans in attendance
+    poss: Possession (calculated as the percentage of passes attempted) [int]
     
-    captain: Captain of team
+    attendance: Number of fans in attendance [int]
     
-    formation: Formation structure of team
+    captain: Captain of team [str]
     
-    referee: Referee officiating the game
+    formation: Formation structure of team [str]
     
-    sh: Number of shots attempted (excluding penalty attempts)
+    referee: Referee officiating the game [str]
     
-    sot: Shots on target (excluding penatlies)
+    sh: Number of shots attempted (excluding penalty attempts) [int]
     
-    dist: Average shot distance, in yards, from the opposing goal
+    sot: Shots on target (excluding penatlies) [int]
     
-    fk: Shots from free kicks 
+    dist: Average shot distance, in yards, from the opposing goal [float]
     
-    pkscored: Penalty kicks made
+    fk: Shots from free kicks [int]
     
-    pkatt: Penalty kicks attempted 
+    pkscored: Penalty kicks made [int]
     
-    tkl: Number of players tackled 
+    pkatt: Penalty kicks attempted [int]
     
-    tklw: Tackles where tackler’s team wins the ball
+    tkl: Number of players tackled [int]
     
-    tklvsdrb: Tackles won against opponent dribbles
+    tklw: Tackles where tackler’s team wins the ball [int]
     
-    attvsdrb: tackles attempted against opponent dribbles
+    tklvsdrb: Tackles won against opponent dribbles [int]
     
-    press: Number of times pressuring opposing players, who are in possession of the ball
+    attvsdrb: tackles attempted against opponent dribbles [int]
     
-    succ: Number of times possessions gained within five seconds of applying pressure 
+    press: Number of times pressuring opposing players, who are in possession of the ball [int]
     
-    blocks: Number of times ball is blocked by team
+    succ: Number of times possessions gained within five seconds of applying pressure [int]
     
-    inter: Interceptions of passes attempted by the opposing team
+    blocks: Number of times ball is blocked by team [int]
     
-    err: Errors leading to a shot by the opposing team 
+    inter: Interceptions of passes attempted by the opposing team [int]
     
-    sota: Number of shots on target of goal by opposing team
+    err: Errors leading to a shot by the opposing team [int]
     
-    saves: Number of opposing team's shots saved by the goalie
+    sota: Number of shots on target of goal by opposing team [int]
     
-    psxg: Post-Shot Expected Goals (PSxG: expected goals based on how likely the goalkeeper is to save the shot) 
+    saves: Number of opposing team's shots saved by the goalie [int]
     
-    pxsg_pm: PSxG - Goals allowed
+    psxg: Post-Shot Expected Goals (PSxG: expected goals based on how likely the goalkeeper is to save the shot) [float]
     
-    pass_cmp: Passes Completed
+    pxsg_pm: PSxG - Goals allowed [float]
     
-    pass_att: Passes Attempted 
+    pass_cmp: Passes Completed [int]
     
-    pass_totdist: Total distance of passes
+    pass_att: Passes Attempted [int]
     
-    sca: Shot-creating actions (offensive actions directly leading to a shot) 
+    pass_totdist: Total distance of passes [int]
     
-    sca_passlive: Completed live-ball passes that lead to a shot attempt 
+    sca: Shot-creating actions (offensive actions directly leading to a shot) [int]
     
-    sca_passdead: Completed dead-ball passes that lead to a shot attempt (i.e. free kicks, corner kicks, kick offs, throw-ins and goal kicks) 
+    sca_passlive: Completed live-ball passes that lead to a shot attempt [int]
     
-    sca_drib: Successful dribbles in the build up to a shot attempt 
+    sca_passdead: Completed dead-ball passes that lead to a shot attempt (i.e. free kicks, corner kicks, kick offs, throw-ins and goal kicks) [int]
     
-    sca_sh: Shots in the build up to another shot attempt 
+    sca_drib: Successful dribbles in the build up to a shot attempt [int]
     
-    sca_fld: Fouls drawn in the build up to a shot attempt 
+    sca_sh: Shots in the build up to another shot attempt [int]
     
-    sca_def: Defensive actions in the build up to a shot attempt 
+    sca_fld: Fouls drawn in the build up to a shot attempt [int]
     
-    gca: Goal-creating actions (offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls)
+    sca_def: Defensive actions in the build up to a shot attempt [int]
+    
+    gca: Goal-creating actions (offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls) [int]
     
     gca_passlive: Completed live passes in the build up to a goal
     
-    gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal 
+    gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal [int]
     
-    gca_drib: Dribbles completed in the build up to a goal
+    gca_drib: Dribbles completed in the build up to a goal [int]
     
-    gca_sh: Shots taken in the build up to a goal
+    gca_sh: Shots taken in the build up to a goal [int]
     
-    gca_fld: Fouls drawn before a goal was scored
+    gca_fld: Fouls drawn before a goal was scored [int]
     
-    gca_def: Defensive actions that lead to a goal
+    gca_def: Defensive actions that lead to a goal [int]
     
-    touches: Total number of touches
+    touches: Total number of touches [int]
     
-    touches_defthird: Number of touches in the defending third of the pitch
+    touches_defthird: Number of touches in the defending third of the pitch [int]
     
-    touches_attthird: Number of touches in the attacking third of the pitch
+    touches_attthird: Number of touches in the attacking third of the pitch [int]
     
-    carries: Total dribbles
+    carries: Total dribbles [int]
     
-    carries_totdist: Total distance of dribbles
+    carries_totdist: Total distance of dribbles [int]
     
-    carries_progdist: Total distance of progressive dribbles
+    carries_progdist: Total distance of progressive dribbles [int]
     
-    progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles
+    progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles [int]
     
-    progpassrec: Number of progressive (at least 5 yards towards the opponent’s goal) passes successfully received
+    progpassrec: Number of progressive (at least 5 yards towards the opponent’s goal) passes successfully received [int]
     
-    crdy: Number of yellow card warnings given
+    crdy: Number of yellow card warnings given [int]
     
-    crdr: Number of straight red card send offs
+    crdr: Number of straight red card send offs [int]
     
-    twocrdy: Number of two card yellow send offs
+    twocrdy: Number of two card yellow send offs [int]
     
-    fls: Number of fouls committed
+    fls: Number of fouls committed [int]
     
-    fld: Number of fouls given
+    fld: Number of fouls given [int]
     
-    off: Number of times offside
+    off: Number of times offside [int]
     
-    recov: Number of loose balls recovered
+    recov: Number of loose balls recovered [int]
     
-    arlWon: Aerial duels won
+    arlWon: Aerial duels won [int]
     
-    arlLost: Aerial duels lost
+    arlLost: Aerial duels lost [int]
 
 #### Summary Statistics
 
