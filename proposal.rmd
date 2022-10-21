@@ -43,9 +43,9 @@ Each row represents a team's statistics in a given match. In a given match, ther
 
 ##### variable description
 
-    season: Soccer Season (year)
+    season: Soccer season (year)
     
-    team: Team Name 
+    team: Team name 
     
     date: Date of match 
     
@@ -73,19 +73,19 @@ Each row represents a team's statistics in a given match. In a given match, ther
     
     poss: Possession (calculated as the percentage of passes attempted) 
     
-    attendance: number of fans in attendance
+    attendance: Number of fans in attendance
     
-    captain: captain of team
+    captain: Captain of team
     
-    formation: Formation style of team
+    formation: Formation structure of team
     
-    referee: Referee ruling the game
+    referee: Referee officiating the game
     
-    sh: Shots total (does not include penalties)
+    sh: Number of shots attempted (excluding penalty attempts)
     
-    sot: Shots on target (shots on target do not include penalty kicks)
+    sot: Shots on target (excluding penatlies)
     
-    dist: Average distance, in yards, from goal of all shots taken (Minimum 0.395 shots per squad game to qualify as a leader, does not include penalty kicks) 
+    dist: Average shot distance, in yards, from the opposing goal
     
     fk: Shots from free kicks 
     
@@ -95,51 +95,51 @@ Each row represents a team's statistics in a given match. In a given match, ther
     
     tkl: Number of players tackled 
     
-    tklw: Tackles in which tackler’s team won possession of the ball
+    tklw: Tackles where tackler’s team wins the ball
     
     tklvsdrb: Tackles won against opponent dribbles
     
     attvsdrb: tackles attempted against opponent dribbles
     
-    press: Number of times applying pressure to opposing player who is receiving, carrying or releasing the ball 
+    press: Number of times pressuring opposing players, who are in possession of the ball
     
-    succ: Number of times the squad gained possession within five seconds of applying pressure 
+    succ: Number of times possessions gained within five seconds of applying pressure 
     
-    blocks: Number of times blocking the ball by standing in its path 
+    blocks: Number of times ball is blocked by team
     
-    inter: Interceptions 
+    inter: Interceptions of passes attempted by the opposing team
     
-    err: Mistakes leading to an opponent’s shot 
+    err: Errors leading to a shot by the opposing team 
     
-    sota: Number of times blocking a shot by standing in its path 
+    sota: Number of shots on target of goal by opposing team
     
-    saves: Number of times blocking a shot that was on target, by standing in its path 
+    saves: Number of opposing team's shots saved by the goalie
     
-    psxg: Post-Shot Expected Goals (PSxG is expected goals based on how likely the goalkeeper is to save the shot) 
+    psxg: Post-Shot Expected Goals (PSxG: expected goals based on how likely the goalkeeper is to save the shot) 
     
-    pxsg_pm: Psxg - Goals allowed
+    pxsg_pm: PSxG - Goals allowed
     
-    pass_cmp: Completed passes 
+    pass_cmp: Passes Completed
     
-    pass_att: Attempted Passes 
+    pass_att: Passes Attempted 
     
-    pass_totdist: Total distance of passes in a game 
+    pass_totdist: Total distance of passes
     
-    sca: Shot-creating actions (the two offensive actions directly leading to a shot) 
+    sca: Shot-creating actions (offensive actions directly leading to a shot) 
     
     sca_passlive: Completed live-ball passes that lead to a shot attempt 
     
-    sca_passdead: Completed dead-ball passes that lead to a shot attempt (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) 
+    sca_passdead: Completed dead-ball passes that lead to a shot attempt (i.e. free kicks, corner kicks, kick offs, throw-ins and goal kicks) 
     
-    sca_drib: Successful dribbles that lead to a shot attempt 
+    sca_drib: Successful dribbles in the build up to a shot attempt 
     
-    sca_sh: Shots that lead to another shot attempt 
+    sca_sh: Shots in the build up to another shot attempt 
     
-    sca_fld: Fouls drawn that lead to a shot attempt 
+    sca_fld: Fouls drawn in the build up to a shot attempt 
     
-    sca_def: Defensive actions that lead to a shot attempt 
+    sca_def: Defensive actions in the build up to a shot attempt 
     
-    gca: Goal-creating actions (the two offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls)
+    gca: Goal-creating actions (offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls)
     
     gca_passlive: Completed live passes in the build up to a goal
     
@@ -167,7 +167,7 @@ Each row represents a team's statistics in a given match. In a given match, ther
     
     progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles
     
-    progpassrec: Number of progressive passes successfully received
+    progpassrec: Number of progressive (at least 5 yards towards the opponent’s goal) passes successfully received
     
     crdy: Number of yellow card warnings given
     
@@ -183,7 +183,7 @@ Each row represents a team's statistics in a given match. In a given match, ther
     
     recov: Number of loose balls recovered
     
-    arlWon: Aerial duels Won
+    arlWon: Aerial duels won
     
     arlLost: Aerial duels lost
 
