@@ -16,7 +16,7 @@ df <- read_csv("matches_df.csv")
 
 # df <- df %>%
 #   select(-`Unnamed: 0`)
-df <- df[-1]
+df <- df[-c(1,2)]
 ```
 
 ### Background
@@ -28,9 +28,11 @@ The number of goals scored by a team is often inconsistent from game to game and
 xG is an incredibly valuable metric, but only takes into account the quality of a team’s scoring opportunities. xG shows us that if a team can consistently create high-quality and quantity shot opportunities and prevent the opposition from doing the same, they will achieve good results over time. However, xG does not provide any context around how a team was able to create good scoring chances. In soccer, there are different playing styles. For example, some teams base their tactic around controlling the ball, and some teams try to defend deep and counterattack. Metrics like xG do not consider these playing styles. A good team will be put up good xG numbers regardless if they are a possession-heavy or a counter-attacking team because that is what makes them *good* in the first place. But what did these teams do well to allow them to create such good scoring opportunities? This question leads to our **problem statement:**
 
 <br>
+
 *Can we create a consistent team performance measure in soccer that is based on both qualitative and stylistic elements?*
 
 <br>
+
 Such a metric could allow us to compare two different good teams. For example, Liverpool's biggest strength might be their ability to recover the ball high up the field, while Manchester City dominate their opponents with their precise passing game. They are both good, but they have different styles.
 
 ### Data
