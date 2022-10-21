@@ -1,0 +1,220 @@
+---
+title: 'QAC385: Project Proposal'
+author: 'Group D: Nelson Lin, Henrick Koo, Edvin Tran Hoac'
+date: '2022-10-20'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r data prep, include=FALSE}
+library(tidyverse)
+df <- read_csv("matches_df.csv")
+# df <- read_csv("~/Documents/QAC385_ML/Project/matches_df.csv")
+
+# df <- df %>%
+#   select(-`Unnamed: 0`)
+df <- df[-1]
+```
+
+### Background
+
+In soccer, the outcome of a goal is determined by the number of goals scored by the two teams. However, since there are so few goals scored per game in soccer, the number of goals does not tell the whole story of a game and comes with a large amount of randomness and variability. There is always a chance that a bottom team can beat a top team in soccer because even though the top team will generally play at a higher level than the bottom team, the result of a game can be decided by a few critical moments. Sometimes the bottom team is lucky and all these critical moments go in their favor, resulting in an underdog victory. But theoretically, if that game was replayed an infinite amount of times, the probability that the top team would win more often than the bottom team would.
+
+The number of goals scored by a team is often inconsistent from game to game and does not provide any context to how the game was played out. Therefore, people have historically used other statistics to describe a soccer game, such as the percentage of time each team had control of the ball, the number of shots each team has, etc. More recently, a metric called Expected Goals, or xG in short, has taken the soccer world by storm. It calculates the probability of a shot resulting in a goal based on a number of variables, including shot location, body part of the shot, and goalkeeper location among many others. By adding up the xG values from all shots attempted by a team in a game, one can obtain an expected value of how many goals the team will score, based on the quality of their scoring chances. Although there still is some pushback on xG from soccer traditionalists, the metric is becoming more and more accepted among the general public and is widely used by professional clubs around the world. [According to Stats Perform](https://www.statsperform.com/resource/expected-goals-in-context/#:~:text=Whereas%20goals%20are%20relatively%20rare,context%20for%20evaluating%20team%20performance.), one of the leading soccer analytics companies, xG is a more consistent measure of performance than goals scored, since it fluctuates much less from game to game.
+
+xG is an incredibly valuable metric, but only takes into account the quality of a team’s scoring opportunities. xG shows us that if a team can consistently create high-quality and quantity shot opportunities and prevent the opposition from doing the same, they will achieve good results over time. However, xG does not provide any context around how a team was able to create good scoring chances. In soccer, there are different playing styles. For example, some teams base their tactic around controlling the ball, and some teams try to defend deep and counterattack. Metrics like xG do not consider these playing styles. A good team will be put up good xG numbers regardless if they are a possession-heavy or a counter-attacking team because that is what makes them *good* in the first place. But what did these teams do well to allow them to create such good scoring opportunities? This question leads to our **problem statement:**
+
+<br>
+*Can we create a consistent team performance measure in soccer that is based on both qualitative and stylistic elements?*
+
+<br>
+Such a metric could allow us to compare two different good teams. For example, Liverpool's biggest strength might be their ability to recover the ball high up the field, while Manchester City dominate their opponents with their precise passing game. They are both good, but they have different styles.
+
+### Data
+
+##### data structure
+
+Each row represents a team's statistics in a given match. In a given match, there will be two observations, one for the home team and one for the away team. Our dataframe currently contains 3800 matches from the past 5 seasons of the English Premier League.  The range of variables within the data cover a wide variety of statistics that we can use to analyze a team's match performance, from the team's attacking output, for instance (shots on target: sot,  goal creating actions: gca), as well as defensive actions (tackles won: tklw, post shot expected goals: psxg) and other miscellaneous information (referee, yellow cards: crdy).
+
+##### variable description
+
+    season: Soccer Season (year)
+    
+    team: Team Name 
+    
+    date: Date of match 
+    
+    time: Start time of match 
+    
+    comp: Soccer league  
+    
+    gameweek: Matchweek of season (numerical) 
+    
+    day: Day of match 
+    
+    venue: Home or away game 
+    
+    result: Outcome of game (W/L) 
+    
+    gf: Goals for (scored by team in team var column) 
+    
+    ga: Goals against (scored by opponent)
+    
+    opponent: Opposition team
+    
+    xg: Expected goals (includes penalties but not penalty shootout) 
+    
+    xga: Expected opposition goals (includes penalties but not penalty shootout) 
+    
+    poss: Possession (calculated as the percentage of passes attempted) 
+    
+    attendance: number of fans in attendance
+    
+    captain: captain of team
+    
+    formation: Formation style of team
+    
+    referee: Referee ruling the game
+    
+    sh: Shots total (does not include penalties)
+    
+    sot: Shots on target (shots on target do not include penalty kicks)
+    
+    dist: Average distance, in yards, from goal of all shots taken (Minimum 0.395 shots per squad game to qualify as a leader, does not include penalty kicks) 
+    
+    fk: Shots from free kicks 
+    
+    pkscored: Penalty kicks made
+    
+    pkatt: Penalty kicks attempted 
+    
+    tkl: Number of players tackled 
+    
+    tklw: Tackles in which tackler’s team won possession of the ball
+    
+    tklvsdrb: Tackles won against opponent dribbles
+    
+    attvsdrb: tackles attempted against opponent dribbles
+    
+    press: Number of times applying pressure to opposing player who is receiving, carrying or releasing the ball 
+    
+    succ: Number of times the squad gained possession within five seconds of applying pressure 
+    
+    blocks: Number of times blocking the ball by standing in its path 
+    
+    inter: Interceptions 
+    
+    err: Mistakes leading to an opponent’s shot 
+    
+    sota: Number of times blocking a shot by standing in its path 
+    
+    saves: Number of times blocking a shot that was on target, by standing in its path 
+    
+    psxg: Post-Shot Expected Goals (PSxG is expected goals based on how likely the goalkeeper is to save the shot) 
+    
+    pxsg_pm: Psxg - Goals allowed
+    
+    pass_cmp: Completed passes 
+    
+    pass_att: Attempted Passes 
+    
+    pass_totdist: Total distance of passes in a game 
+    
+    sca: Shot-creating actions (the two offensive actions directly leading to a shot) 
+    
+    sca_passlive: Completed live-ball passes that lead to a shot attempt 
+    
+    sca_passdead: Completed dead-ball passes that lead to a shot attempt (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) 
+    
+    sca_drib: Successful dribbles that lead to a shot attempt 
+    
+    sca_sh: Shots that lead to another shot attempt 
+    
+    sca_fld: Fouls drawn that lead to a shot attempt 
+    
+    sca_def: Defensive actions that lead to a shot attempt 
+    
+    gca: Goal-creating actions (the two offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls)
+    
+    gca_passlive: Completed live passes in the build up to a goal
+    
+    gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal 
+    
+    gca_drib: Dribbles completed in the build up to a goal
+    
+    gca_sh: Shots taken in the build up to a goal
+    
+    gca_fld: Fouls drawn before a goal was scored
+    
+    gca_def: Defensive actions that lead to a goal
+    
+    touches: Total number of touches
+    
+    touches_defthird: Number of touches in the defending third of the pitch
+    
+    touches_attthird: Number of touches in the attacking third of the pitch
+    
+    carries: Total dribbles
+    
+    carries_totdist: Total distance of dribbles
+    
+    carries_progdist: Total distance of progressive dribbles
+    
+    progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles
+    
+    progpassrec: Number of progressive passes successfully received
+    
+    crdy: Number of yellow card warnings given
+    
+    crdr: Number of straight red card send offs
+    
+    twocrdy: Number of two card yellow send offs
+    
+    fls: Number of fouls committed
+    
+    fld: Number of fouls given
+    
+    off: Number of times offside
+    
+    recov: Number of loose balls recovered
+    
+    arlWon: Aerial duels Won
+    
+    arlLost: Aerial duels lost
+
+```{r sumtable, echo = FALSE, message = FALSE}
+# install.packages("vtable")
+library(vtable)
+
+df %>%
+  select_if(is.numeric) %>%
+
+sumtable()
+```
+
+##### data source
+
+Our dataset was collected using resources provided by Sports Reference's [FBREF](https://fbref.com/en/) database, as well as, [StatsBomb](https://www.statsbomb.com/). Our group scraped Premier League statistics of the previous 5 seasons from these websites, and collated the data into one large dataframe for use in our project.
+
+Their terms and conditions for using data from their site is the following:
+    
+    Subject to the terms of this Agreement, you are granted a limited, personal, non-exclusive, non-sublicensable, non-assignable, non-transferable, and revocable license to access and use the Site and Content. However, except as expressly permitted by this Agreement, in connection with the use of the Site, you may not:
+    
+        - alter or modify the Site; or
+        - sell, rent, lease, transfer, provide, or otherwise assign to any third party any rights to the Site; or
+        remove or modify any proprietary notice or labels on the Site, or use any of our trademarks as meta-tags on any other website; or
+        - use the Site for any non-authorized purpose or any illegal purpose; or
+        - copy, modify, erase, or damage any information contained on computer servers used or controlled by SRL or any third party; or
+        - use the Site to violate any legal right of any third party, including any publicity or privacy right, copyright, or other intellectual property right, or to take any action that is harassing, libelous, defamatory, abusive, tortious, threatening, harmful, or otherwise objectionable; or
+        - access or use any password-protected, secure, or non-public areas of the Site, or access data on the Site not intended for you, except as specifically authorized by SRL; or
+        - impersonate or misrepresent your affiliation with any person or entity; or
+        - without our express written permission, use any automated means to access or use the Site, including scripts, bots, scrapers, data miners, or similar software, in a manner that adversely impacts site performance or access; or
+        - use any material or Content from the Site, including without limitation any statistics or data, (i) to create any database, archive, or other data store that competes with or constitutes a material substitute for the services or data stores offered on the Site or by the Site's Data Providers or (ii) to provide any service that competes with or constitutes a material substitute for the services or data stores offered on the Site or by the Site's Data Providers; or
+        - attempt to or actually disrupt, impair, or interfere with the Site, or any information, data, or materials posted and/or displayed by SRL; or
+        - attempt to probe, scan, or test the vulnerability of the Site or breach any implemented security or authentication measures, regardless of your motives or intent; or
+        - attempt to interfere with or disrupt access to or use of the Site by any user, processor, host, or network, including, without limitation, by submitting a virus, worm, Trojan horse, or other malicious code; or
+        - post any content to the Site that: (i) includes any profane, obscene, defamatory, discriminatory, threatening, menacing, harassing, or violent content; (ii) depicts or suggests nudity or sexual acts; (iii) promotes hatred, including against members of a protected group under federal, state, or local law (such as, for example, a group defined by race, gender, or national origin); (iv) is objectively shocking or disgusting; (v) depicts or suggests presently occurring illegal activity, including, e.g., illicit drug use or underage drinking; (vi) includes unlicensed proprietary content of a third party, including, e.g., third-party content protected by copyright or trademark for which you do not have a license; (vii) breaches any duty of confidentiality you may have to a third party (e.g., discloses private information about a third party without consent); or (viii) is contrary to the Agreement, including SRL’s rules and policies.
+
