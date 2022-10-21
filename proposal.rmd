@@ -200,23 +200,3 @@ sumtable()
 ##### data source
 
 Our dataset was collected using resources provided by Sports Reference's [FBREF](https://fbref.com/en/) database, as well as, [StatsBomb](https://www.statsbomb.com/). Our group scraped Premier League statistics of the previous 5 seasons from these websites, and collated the data into one large dataframe for use in our project.
-
-Their terms and conditions for using data from their site is the following:
-    
-    Subject to the terms of this Agreement, you are granted a limited, personal, non-exclusive, non-sublicensable, non-assignable, non-transferable, and revocable license to access and use the Site and Content. However, except as expressly permitted by this Agreement, in connection with the use of the Site, you may not:
-    
-        - alter or modify the Site; or
-        - sell, rent, lease, transfer, provide, or otherwise assign to any third party any rights to the Site; or
-        remove or modify any proprietary notice or labels on the Site, or use any of our trademarks as meta-tags on any other website; or
-        - use the Site for any non-authorized purpose or any illegal purpose; or
-        - copy, modify, erase, or damage any information contained on computer servers used or controlled by SRL or any third party; or
-        - use the Site to violate any legal right of any third party, including any publicity or privacy right, copyright, or other intellectual property right, or to take any action that is harassing, libelous, defamatory, abusive, tortious, threatening, harmful, or otherwise objectionable; or
-        - access or use any password-protected, secure, or non-public areas of the Site, or access data on the Site not intended for you, except as specifically authorized by SRL; or
-        - impersonate or misrepresent your affiliation with any person or entity; or
-        - without our express written permission, use any automated means to access or use the Site, including scripts, bots, scrapers, data miners, or similar software, in a manner that adversely impacts site performance or access; or
-        - use any material or Content from the Site, including without limitation any statistics or data, (i) to create any database, archive, or other data store that competes with or constitutes a material substitute for the services or data stores offered on the Site or by the Site's Data Providers or (ii) to provide any service that competes with or constitutes a material substitute for the services or data stores offered on the Site or by the Site's Data Providers; or
-        - attempt to or actually disrupt, impair, or interfere with the Site, or any information, data, or materials posted and/or displayed by SRL; or
-        - attempt to probe, scan, or test the vulnerability of the Site or breach any implemented security or authentication measures, regardless of your motives or intent; or
-        - attempt to interfere with or disrupt access to or use of the Site by any user, processor, host, or network, including, without limitation, by submitting a virus, worm, Trojan horse, or other malicious code; or
-        - post any content to the Site that: (i) includes any profane, obscene, defamatory, discriminatory, threatening, menacing, harassing, or violent content; (ii) depicts or suggests nudity or sexual acts; (iii) promotes hatred, including against members of a protected group under federal, state, or local law (such as, for example, a group defined by race, gender, or national origin); (iv) is objectively shocking or disgusting; (v) depicts or suggests presently occurring illegal activity, including, e.g., illicit drug use or underage drinking; (vi) includes unlicensed proprietary content of a third party, including, e.g., third-party content protected by copyright or trademark for which you do not have a license; (vii) breaches any duty of confidentiality you may have to a third party (e.g., discloses private information about a third party without consent); or (viii) is contrary to the Agreement, including SRL’s rules and policies.
-

@@ -39,7 +39,7 @@ Such a metric could allow us to compare two different good teams. For example, L
 
 #### Data Structure
 
-    Each row represents a team’s statistics in a given match. In a given match, there will be two observations, one for the home team and one for the away team. Our dataframe currently contains 3800 matches from the past 5 seasons of the English Premier League. The range of variables within the data cover a wide variety of statistics that we can use to analyze a team’s match performance, from the team’s attacking output, for instance (shots on target: sot, goal creating actions: gca), as well as defensive actions (tackles won: tklw, post shot expected goals: psxg) and other miscellaneous information (referee, yellow cards: crdy).
+Each row represents a team’s statistics in a given match. In a given match, there will be two observations, one for the home team and one for the away team. Our dataframe currently contains 3800 matches from the past 5 seasons of the English Premier League. The range of variables within the data cover a wide variety of statistics that we can use to analyze a team’s match performance, from the team’s attacking output, for instance (shots on target: sot, goal creating actions: gca), as well as defensive actions (tackles won: tklw, post shot expected goals: psxg) and other miscellaneous information (referee, yellow cards: crdy).
 
 
 
@@ -125,10 +125,6 @@ Such a metric could allow us to compare two different good teams. For example, L
 #### Data Source
 
     Our dataset was collected using resources provided by Sports Reference’s FBREF database, as well as, StatsBomb. Our group scraped Premier League statistics of the previous 5 seasons from these websites, and collated the data into one large dataframe for use in our project.
-
-####
-
-
 
 
 ## Development Roadmap: Future Plans
