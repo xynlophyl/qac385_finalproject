@@ -45,78 +45,149 @@ Each row represents a team’s statistics in a given match. In a given match, th
 
 #### Variable Descriptions
 
-    - season: Soccer Season (year)
-    - team: Team Name 
-    - date: Date of match 
-    - time: Start time of match 
-    - comp: Soccer league  
-    - gameweek: Matchweek of season (numerical) 
-    - day: Day of match 
-    - venue: Home or away game 
-    - result: Outcome of game (W/L) 
-    - gf: Goals for (scored by team in team var column) 
-    - ga: Goals against (scored by opponent)
-    - opponent: Opposition team
-    - xg: Expected goals (includes penalties but not penalty shootout) 
-    - xga: Expected opposition goals (includes penalties but not penalty shootout) 
-    - poss: Possession (calculated as the percentage of passes attempted) 
-    - attendance: number of fans in attendance
-    - captain: captain of team
-    - formation: Formation style of team
-    - referee: Referee ruling the game
-    - sh: Shots total (does not include penalties)
-    - sot: Shots on target (shots on target do not include penalty kicks)
-    - dist: Average distance, in yards, from goal of all shots taken (Minimum 0.395 shots per squad game to qualify as a leader, does not include penalty kicks) 
-    - fk: Shots from free kicks 
-    - pkscored: Penalty kicks made
-    - pkatt: Penalty kicks attempted 
-    - tkl: Number of players tackled 
-    - tklw: Tackles in which tackler’s team won possession of the ball
-    - tklvsdrb: Tackles won against opponent dribbles
-    - attvsdrb: tackles attempted against opponent dribbles
-    - press: Number of times applying pressure to opposing player who is receiving, carrying or releasing the ball 
-    - succ: Number of times the squad gained possession within five seconds of applying pressure 
-    - blocks: Number of times blocking the ball by standing in its path 
-    - inter: Interceptions 
-    - err: Mistakes leading to an opponent’s shot 
-    - sota: Number of times blocking a shot by standing in its path 
-    - saves: Number of times blocking a shot that was on target, by standing in its path 
-    - psxg: Post-Shot Expected Goals (PSxG is expected goals based on how likely the goalkeeper is to save the shot) 
-    - pxsg_pm: Psxg - Goals allowed
-    - pass_cmp: Completed passes 
-    - pass_att: Attempted Passes 
-    - pass_totdist: Total distance of passes in a game 
-    - sca: Shot-creating actions (the two offensive actions directly leading to a shot) 
-    - sca_passlive: Completed live-ball passes that lead to a shot attempt 
-    - sca_passdead: Completed dead-ball passes that lead to a shot attempt (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) 
-    - sca_drib: Successful dribbles that lead to a shot attempt 
-    - sca_sh: Shots that lead to another shot attempt 
-    - sca_fld: Fouls drawn that lead to a shot attempt 
-    - sca_def: Defensive actions that lead to a shot attempt 
-    - gca: Goal-creating actions (the two offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls)
-    - gca_passlive: Completed live passes in the build up to a goal
-    - gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal 
-    - gca_drib: Dribbles completed in the build up to a goal
-    - gca_sh: Shots taken in the build up to a goal
-    - gca_fld: Fouls drawn before a goal was scored
-    - gca_def: Defensive actions that lead to a goal
-    - touches: Total number of touches
-    - touches_defthird: Number of touches in the defending third of the pitch
-    - touches_attthird: Number of touches in the attacking third of the pitch
-    - carries: Total dribbles
-    - carries_totdist: Total distance of dribbles
-    - carries_progdist: Total distance of progressive dribbles
-    - progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles
-    - progpassrec: Number of progressive passes successfully received
-    - crdy: Number of yellow card warnings given
-    - crdr: Number of straight red card send offs
-    - twocrdy: Number of two card yellow send offs
-    - fls: Number of fouls committed
-    - fld: Number of fouls given
-    - off: Number of times offside
-    - recov: Number of loose balls recovered
-    - arlWon: Aerial duels Won
-    - arlLost: Aerial duels lost
+season: Soccer season (year)
+    
+    team: Team name 
+    
+    date: Date of match 
+    
+    time: Start time of match 
+    
+    comp: Soccer league  
+    
+    gameweek: Matchweek of season (numerical) 
+    
+    day: Day of match 
+    
+    venue: Home or away game 
+    
+    result: Outcome of game (W/L) 
+    
+    gf: Goals for (scored by team in team var column) 
+    
+    ga: Goals against (scored by opponent)
+    
+    opponent: Opposition team
+    
+    xg: Expected goals (includes penalties but not penalty shootout) 
+    
+    xga: Expected opposition goals (includes penalties but not penalty shootout) 
+    
+    poss: Possession (calculated as the percentage of passes attempted) 
+    
+    attendance: Number of fans in attendance
+    
+    captain: Captain of team
+    
+    formation: Formation structure of team
+    
+    referee: Referee officiating the game
+    
+    sh: Number of shots attempted (excluding penalty attempts)
+    
+    sot: Shots on target (excluding penatlies)
+    
+    dist: Average shot distance, in yards, from the opposing goal
+    
+    fk: Shots from free kicks 
+    
+    pkscored: Penalty kicks made
+    
+    pkatt: Penalty kicks attempted 
+    
+    tkl: Number of players tackled 
+    
+    tklw: Tackles where tackler’s team wins the ball
+    
+    tklvsdrb: Tackles won against opponent dribbles
+    
+    attvsdrb: tackles attempted against opponent dribbles
+    
+    press: Number of times pressuring opposing players, who are in possession of the ball
+    
+    succ: Number of times possessions gained within five seconds of applying pressure 
+    
+    blocks: Number of times ball is blocked by team
+    
+    inter: Interceptions of passes attempted by the opposing team
+    
+    err: Errors leading to a shot by the opposing team 
+    
+    sota: Number of shots on target of goal by opposing team
+    
+    saves: Number of opposing team's shots saved by the goalie
+    
+    psxg: Post-Shot Expected Goals (PSxG: expected goals based on how likely the goalkeeper is to save the shot) 
+    
+    pxsg_pm: PSxG - Goals allowed
+    
+    pass_cmp: Passes Completed
+    
+    pass_att: Passes Attempted 
+    
+    pass_totdist: Total distance of passes
+    
+    sca: Shot-creating actions (offensive actions directly leading to a shot) 
+    
+    sca_passlive: Completed live-ball passes that lead to a shot attempt 
+    
+    sca_passdead: Completed dead-ball passes that lead to a shot attempt (i.e. free kicks, corner kicks, kick offs, throw-ins and goal kicks) 
+    
+    sca_drib: Successful dribbles in the build up to a shot attempt 
+    
+    sca_sh: Shots in the build up to another shot attempt 
+    
+    sca_fld: Fouls drawn in the build up to a shot attempt 
+    
+    sca_def: Defensive actions in the build up to a shot attempt 
+    
+    gca: Goal-creating actions (offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls)
+    
+    gca_passlive: Completed live passes in the build up to a goal
+    
+    gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal 
+    
+    gca_drib: Dribbles completed in the build up to a goal
+    
+    gca_sh: Shots taken in the build up to a goal
+    
+    gca_fld: Fouls drawn before a goal was scored
+    
+    gca_def: Defensive actions that lead to a goal
+    
+    touches: Total number of touches
+    
+    touches_defthird: Number of touches in the defending third of the pitch
+    
+    touches_attthird: Number of touches in the attacking third of the pitch
+    
+    carries: Total dribbles
+    
+    carries_totdist: Total distance of dribbles
+    
+    carries_progdist: Total distance of progressive dribbles
+    
+    progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles
+    
+    progpassrec: Number of progressive (at least 5 yards towards the opponent’s goal) passes successfully received
+    
+    crdy: Number of yellow card warnings given
+    
+    crdr: Number of straight red card send offs
+    
+    twocrdy: Number of two card yellow send offs
+    
+    fls: Number of fouls committed
+    
+    fld: Number of fouls given
+    
+    off: Number of times offside
+    
+    recov: Number of loose balls recovered
+    
+    arlWon: Aerial duels won
+    
+    arlLost: Aerial duels lost
 
 #### Summary Statistics
 
