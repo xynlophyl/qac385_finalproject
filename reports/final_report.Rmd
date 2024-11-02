@@ -1,0 +1,505 @@
+---
+title: "Performance Measure for Football"
+date: "Dec 6, 2022"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE)
+```
+
+### Team Members  
+* Edvin Tran Hoac
+* Nelson Lin
+* Henrick Koo
+
+
+## Problem Statement
+
+What is the problem you are trying to solve? Why is it important or useful to solve this problem?
+
+In soccer, the outcome of a game is determined by the number of goals scored by two opposing teams, each trying to outscore the other. However, since there are such few goals scored per match, the number of goals often does not tell the whole story of a game and comes with a large amount of randomness and variability. Ultimately, the result of a game can be decided in a few critical moments. There is always a chance that a bottom team gets lucky, being more clinical in decisive moments, and beating a top team, despite the top team generally playing at a higher level than the bottom team, resulting in an underdog victory. But theoretically, if that game was replayed an infinite amount of times, the probability that the top team would win more often than the bottom team would.
+
+The number of goals scored by a team is often inconsistent from game to game and does not provide any context to how the game was played out. Therefore, people have historically used other statistics to describe a soccer game, such as the percentage of time each team had control of the ball, the number of shots each team has etc. More recently, a metric called Expected Goals, or xG in short, has taken the soccer world by storm. It calculates the probability of a shot resulting in a goal based on a number of variables, including shot location, body part of the shot, and goalkeeper location among many others. By adding up the xG values from all shots attempted by a team in a game, one can obtain an expected value of how many goals the team is predicted to score, based on the quality of their scoring chances. Although there still is some pushback on xG from soccer traditionalists, the metric is becoming more and more accepted among the general public and is widely used by professional clubs around the world. [According to Stats Perform](https://www.statsperform.com/resource/expected-goals-in-context/#:~:text=Whereas%20goals%20are%20relatively%20rare,context%20for%20evaluating%20team%20performance.), one of the leading soccer analytics companies, xG is a more consistent measure of performance than goals scored, since it fluctuates much less from game to game. As a predictive model, it is very hard to outperform over time, and it gives a good indication of how a game would have played out if it was replayed a million times. 
+
+xG is an incredibly valuable metric, but only takes into account the quality of a team’s scoring opportunities, and does not provide any context around how a team was able to create good scoring chances. Rather than utilizing the mechanics of the shot, which is hard to quantify, we wanted to see if we could create a metric that adds more context to the match state to predict the attacking output of a team.  This question leads to our **problem statement:**
+
+<br>
+
+*Can we create a comparable predictor of goals without the advanced shot-specific data behind xG using only publicly available data on team performance?*
+
+<br>
+
+## Data Description
+
+Describe the dataset in detail. What is the source? Include URLs. How was it collected? What are the variables? What are the characteristics of the variables?
+
+Each row represents a team's statistics in a given match. In our original dataset, there will be two observations for a given match, one for the home team and one for the away team. After preprocessing, the dataframe used on the model contains 4092 observations and 152 variables detailing matches from the past 5.4 seasons of the English Premier League. The range of variables within the data cover a wide variety of statistics that we can use to analyze a team's match performance, from the team's attacking output, for instance (shots on target: sot, touches in the penalty area: touches_attpen.x ), as well as defensive actions (tackles won: tklw, post shot expected goals: psxg). Using all these different variables, we hope to be able to create a consistent measure that can gauge how many goals a team is expected to score in a match.
+
+Our dataset was collected using resources provided by Sports Reference's [FBREF](https://fbref.com/en/) database, which obtains some of its statistics from Opta (Stats Perform). Our group scraped Premier League statistics of the previous 5.4 seasons from these websites and collated the data into one large data frame for use in our project.
+
+<details>
+  <summary> <i> Variable Descriptions of Original Data</i> (column: description (additional info) [format/type]) </summary>
+ 
+	season: Soccer season [yyyy_yyyy] [chr]
+
+	team: Team name [str]
+
+	date: Date of match [yy-mm-dd] (POSIXct)
+
+	time: time of match [POSIXct]
+
+	comp: Soccer league [str]
+
+	gameweek: Matchweek of season ['Matchweek' 1-38] [chr]
+
+	day: Day of match [ddd] [chr]
+
+	venue: Home or away game [Home/Away] [chr]
+
+	result: Outcome of game [W/L] [chr]
+
+	gf: Goals for (scored by team in team var column) [num]
+
+	ga: Goals against (scored by opponent) [num]
+
+	opponent: Opposition team [str]
+
+	xg: Expected goals (includes penalties but not penalty shootout) [num]
+
+	xga: Expected opposition goals (includes penalties but not penalty shootout) [num]
+
+	poss: Possession (calculated as the percentage of passes attempted) [num]
+
+	attendance: number of fans spectating the match[chr]
+
+	captain: Captain of team [chr]
+
+	formation: Formation structure of team [chr]
+
+	referee: Referee officiating the game [chr]
+
+	sh: Number of shots attempted (excluding penalty attempts) [num]
+
+	sot: Shots on target (excluding penatlies) [num]
+
+	dist: Average shot distance, in yards, from the opposing goal [num]
+
+	fk: Shots from free kicks [num]
+
+	pkscored: Penalty kicks made [num]
+
+	pkatt: Penalty kicks attempted [num]
+
+	tkl: Number of players tackled [num]
+
+	tklw: Tackles where tackler’s team wins the ball [num]]
+
+	tklvsdrb: Tackles won against opponent dribbles [num]
+
+	attvsdrb: tackles attempted against opponent dribbles [num]
+
+	blocks: Number of times ball is blocked by team [num]
+
+	inter: Interceptions of passes attempted by the opposing team [num]
+
+	err: Errors leading to a shot by the opposing team [num]
+
+	sota: Number of shots on target of goal by opposing team [num]
+
+	saves: Number of opposing team's shots saved by the goalie [num]
+
+	psxg: Post-Shot Expected Goals (PSxG: expected goals based on how likely the goalkeeper is to save the shot) [num]
+
+	pxsg_pm: PSxG - Goals allowed [num]
+
+	pass_cmp: Passes Completed [num]
+
+	pass_att: Passes Attempted [num]
+
+	pass_totdist: Total distance of passes [num]
+
+	pass_prgdist:   total distance of passes that are in the direction of the opponent’s goal [num]
+
+	xag: the xG generated from a pass directly leading to a shot [num]
+
+	xa: likelihood that a given pass will become a goal assist  [num]
+
+	pass_kp: passes that directly lead to a shot [num]
+
+	pass_finalthird: Completed passes into the opponent’s third of pitch (not including set pieces) [num]
+
+	pass_ppa: Completed passes into the opponent’s penalty box [num]
+
+	pass_crspa: Completed crosses into the opponent’s penalty box [num]
+
+	pass_prog: Completed passes in the direction of the opponent’s goal [num]
+
+	sca: Shot-creating actions (offensive actions directly leading to a shot)  [num]
+
+	sca_passlive: Completed live-ball passes that lead to a shot attempt [num]
+
+	sca_passdead: Completed dead-ball passes that lead to a shot attempt (i.e. free kicks, corner kicks, kick offs, throw-ins and goal kicks) [num]
+
+	sca_drib: Successful dribbles in the build up to a shot attempt [num]
+
+	sca_sh: Shots in the build up to another shot attempt [num]
+
+	sca_fld: Fouls drawn in the build up to a shot attempt [num]
+
+	sca_def: Defensive actions in the build up to a shot attempt [num]
+
+	gca: Goal-creating actions (offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls) [num]
+
+	gca_passlive: Completed live passes in the build up to a goal [num]
+
+	gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal [num]
+
+	gca_drib: Dribbles completed in the build up to a goal [num]
+
+	gca_sh: Shots taken in the build up to a goal [num]
+
+	gca_fld: Fouls drawn before a goal was scored [num]
+
+	gca_def: Defensive actions that lead to a goal [num]
+
+	touches: Total number of touches [num]
+
+	touches_defthird: Number of touches in the defending third of the pitch [num]
+
+	touches_attthird: Number of touches in the attacking third of the pitch [num]
+
+	touches_attpen: Number of touches in the opponent’s penalty box [num]
+
+	drb_succ:  Number of successful dribbles [num]
+
+	drb_att:  Number of attempted dribbles [num]
+
+	pass_rec:  Number of received passes [num]
+
+	progpass_rec: Number of progressive (at least 5 yards towards the opponent’s goal) passes successfully received [num]
+
+	crdy: Number of yellow card warnings given [num]
+
+	crdr: Number of straight red card send offs [num]
+
+	twocrdy: Number of two card yellow send offs [num]
+
+	fls: Number of fouls committed [num]
+
+	fld: Number of fouls given [num]
+
+	off: Number of times offside [num]
+
+	recov: Number of loose balls recovered [num]
+
+	arlWon: Aerial duels won [num]
+
+	arlLost: Aerial duels lost [num]
+
+	match_id: match id of the game [Home_Away_Season] [chr]
+</details>
+
+## Data Preprocessing
+
+Describe any variable transformations, treatment of missing values, recoding, and any other data manipulations completed prior to applying machine learning techniques. Include the code that reads and munges the data.
+
+We wanted to create a model that would be able to measure the output of both teams in a football match. In order to do so, rather than observing how one team’s overall metrics looked in isolation, we decided to consider how the attacking metrics of that particular team, team x, matched up against the defensive metrics of their opponents, team y (and vice versa). Thus, for data preprocessing, we altered the dataset to fit our model’s structure, taking the general metrics from the attacking team and the defensive metrics of their opponents in one observation, and the opposite in the next observation. The variables we used in each row are shown in the figure below (var.x represents metrics for the attacking team, var.y represents metrics for the defending team):
+
+
+```{r data prep}
+# Load packages
+library(tidyverse)
+library(qacBase)
+library(caret)
+
+# Load data
+df <- read.csv("../data/initial_df.csv")
+
+# Data wrangling to get to desired format
+df <- df %>%
+  select(-attendance)
+
+# Separating home and away rows
+dfh <- df %>%
+  filter(venue == "Home")
+
+dfa <- df %>%
+  filter(venue == "Away")
+
+# Merging datasets so we have one where attacking team is home & defensive team
+# and one where attacking team is away team and defensive team is home team
+p1 <- merge(x = dfh, y = dfa, by = c("referee" = "referee", "date" = "date", "time" = "time", "gameweek" = "gameweek"))
+
+p2 <- merge(x = dfa, y = dfh, by = c("referee" = "referee", "date" = "date", "time" = "time", "gameweek" = "gameweek"))
+
+# Binding these two datasets together
+df <- rbind(p1,p2)
+
+# This if for later, so we can column bind with predicted values
+df_info <- df %>%
+  select(season.x, team.x, opponent.x, venue.x, xg.x)
+
+# Selecting relevant variables
+df <- df %>%
+  select(gf.x,
+		 # Attacking team metrics
+		 poss.x, sh.x, sot.x, fk.x, tkl.x:inter.x, pass_cmp.x:pass_prgdist.x, pass_kp.x:pass_prog.x,
+		 sca.x, sh.x, touches.x:progpass_rec.x, fls.x:arllost.x,
+		 # Defensive team metrics
+		 tkl.y:inter.y, recov.y
+		 )
+
+colnames(df)
+
+```
+
+Then, we used random stratified sampling to split up our dataset into 80% training and 20% testing data in order to train our model.
+
+```{r showing variables used}
+# Split into training/testing set
+library(caret)
+
+set.seed(1234)
+index <- createDataPartition(df$gf.x, p = .8, list = FALSE)
+train <- df[index, ]
+test  <- df[-index, ]
+```
+
+
+## Machine Learning Approach
+
+Describe your analytic techniques in detail. Assume that your audience is not familiar with the techniques that you are using.
+
+
+Initially, we began our investigation running multiple different models, finding a model that best fit to solving our problem statement. The following regression models were considered:
+
+* Poisson
+* Random forest
+* Gradient boosting machine
+* XGBoost
+* Lasso
+* Linear
+
+
+```{r model comparison}
+# Training models
+library(caret)
+
+control <- trainControl(method = "cv", number = 10)
+
+# Linear regression
+set.seed(1234)
+model.lm <- train(gf.x ~ .,
+                  data = train,
+                  method = "lm",
+                  trControl = control, 
+                  metric = "RMSE")
+
+# Lasso regression
+lambda <- 10^seq(-4, 3, length = 100)
+
+set.seed(1234)
+model.lasso <- train(
+  gf.x ~ .,
+  data = train,
+  method = "glmnet",
+  metric = "RMSE",
+  trControl = control,
+  tuneGrid = data.frame(alpha = 1, lambda = lambda)
+)
+
+# XGBoost
+library(xgboost)
+
+set.seed(1234)
+model.xgb <- train(gf.x ~ .,
+                   data = train,
+                   method = "xgbTree",
+                   trControl = control,
+                   metric = "RMSE",
+                   verbose = FALSE,
+                   tunelength = 5,
+                   verbosity = 0)  
+
+# Gradient boosting machine
+library(gbm)
+
+set.seed(1234)
+model.gbm <- train(gf.x ~ .,
+                   data = train,
+                   method = "gbm",
+                   trControl = control,
+                   metric = "RMSE",
+                   verbose = FALSE,
+                   tuneLength = 5)   
+
+# Random forest
+set.seed(1234)
+model.rf <- train(gf.x ~ ., 
+                    data = train, 
+                    method = "rf",
+                    metric = "RMSE",
+                    ntree = 100,
+                    trControl = control)
+
+# Poisson regression
+model.poisson <- train(gf.x ~ .,
+                  data = train,
+                  family = "poisson",
+                  trControl = control, 
+                  metric = "RMSE")
+
+# Comparing models
+results <- resamples(list("Linear" = model.lm,
+                          "Lasso" = model.lasso,
+                          "Random Forest" = model.rf,
+                          "GBM" = model.gbm,
+                          "XGBoost" = model.xgb,
+                          "Poisson" = model.poisson))
+
+bwplot(results, aspect = 1.6)
+```
+
+Lasso regression was selected due to its simplicity and interpretability. Lasso regression is an extension of multiple linear regression that adds regularization to perform variable selection and prevent overfitting. Multiple linear regression minimizes the residual sum of squares in order to obtain its coefficients. Just like multiple linear regression, lasso regression minimizes the residual sum of squares. The difference is that the cost function of lasso regression has an additional penalty term: the sum of the magnitudes of the coefficients multiplied by lambda. The size of the lasso penalty can be adjusted with the lambda hyperparameter. The larger the lambda, the stronger the shrinkage effect on the coefficients. If lambda is 0, the problem becomes multiple linear regression.
+
+The purpose of using regularization techniques like lasso is to prevent overfitting and improve the model’s performance on test data. Lasso can also help with variable selection since it can shrink some variable coefficients to 0, meaning that these variables are completely removed from the model. Since all the models we tried performed very similarly on the training set, the most logical action would be to select the simplest model. Thus, it came down to either multiple linear regression or lasso regression, and we ultimately opted for lasso since it selects only the most important variables.
+
+Thus, our final model is a lasso regression with outcome variable gf.x (goals scored by attacking team). There are 41 independent variables, all of which are team performance statistics from a given match.
+
+## Results
+
+Describe the results in detail. What did you find. This the section for tables and graphs. You want to communicate your results as clearly and compellingly as possible. Your analysis code shoud go here as well. Make sure it is well commented.
+
+When applied to the test data, our model has a root mean squared error (RMSE) of 1.00, a mean absolute error (MAE) of 0.76, and an R-squared value of 0.42.
+
+```{r analysis}
+
+# Fit lasso regression
+control <- trainControl(method = "cv", number = 10)
+
+lambda <- 10^seq(-4, 3, length = 100)
+
+set.seed(1234)
+model.lasso <- train(
+  gf.x ~ .,
+  data = train,
+  method = "glmnet",
+  metric = "RMSE",
+  trControl = control,
+  tuneGrid = data.frame(alpha = 1, lambda = lambda)
+)
+
+# Predictions on test data
+library(modelr)
+
+# Adding predictions to entire original dataset
+df <- df %>%
+  add_predictions(model.lasso, var = "lasso")
+
+# Restoring the variables that were in the cleaned dataset but were removed right before model training such as teams, venue and xG
+df_final <- cbind(df_info, df)
+
+# Remove duplicate variable (season.x)
+df_final <- df_final[-1]
+
+# Only get observations in the test data
+test_pred <- df_final[-index, ]
+
+# Evaluation metrics
+postResample(test_pred$lasso, test_pred$gf.x)
+```
+
+The figure below compares our model to the Opta (Stats Perform) expected goals model and an intercept-only model that predicts every attacking team will score the average number of goals scored by a team in a match.
+
+```{r graph1}
+
+# Get predictions of goals scored by each model
+lasso <- postResample(test_pred$lasso, test$gf.x)
+xg <- postResample(test_pred$xg.x, test$gf.x)
+intercept <- postResample(mean(test_pred$gf.x), test$gf.x)
+
+# Bind the rows together
+testperf <- bind_rows(intercept, xg, lasso) %>%
+  mutate(Model = c("Intercept-only", "Opta xG", "Lasso"), .before = RMSE) %>%
+  mutate(Model = fct_reorder(Model, RMSE))
+
+# Graph
+testperf %>%
+  ggplot(mapping = aes(RMSE, Model)) +
+  geom_point(size = 3) +
+  theme_bw() +
+  theme(axis.title.y = element_blank())
+```
+
+On the test data, our model outperforms the intercept-only model as well as Opta’s expected goals model in terms of RMSE.
+
+Of all the independent variables, sot.x (shots on target by the attacking team) is the most important predictor of how many goals the attacking team scored. Other important variables include:
+
+* pass_crspa.x (successful crosses into the penalty area by attacking team)
+* sh.x (shots by attacking team)
+* fk.x (free kick shots by attacking team)
+
+```{r graph2}
+
+# Variable importance plot
+plot(varImp(model.lasso), top = 10)
+```
+
+## Discussion
+
+What did you find? How well were you able to solve the problem? What are the implications for
+further use? What suggestions do you have for other researchers who want to take your work
+further?
+
+The aim of our project was to build a model that would be comparable to existing metrics in determining the attacking efficacy of teams using more general performance metrics. After testing various models, we found that lasso regression performed the best of all the models, even outperforming the prominent expected goals (xG) metric that we were hoping to emulate. Even then, it is impressive how well expected goals holds up as a predictor of goals in a match since it only considers the characteristics of the shots and not any other descriptive statistics about the game. Additionally, unlike Opta’s xG model, our model is trained solely on English Premier League data between 2017-2022, which means our model could perform slightly worse when applied to other leagues and competitions.
+
+Through our model, we found that variables such as sot.x (shots on target), pass_crspa.x (successful crosses into the penalty area), and sh.x (shots) had the largest effect on our predicted goals variable. It is important to note that shots on target and other output metrics by the attacking team are not only products of the attacking team’s play. Rather, they are a product of the attacking team’s offensive strength as well as their opponent’s defensive solidity. Any team would put up fewer shots on targets against a stronger defensive opponent.
+
+We believe our model can be utilized in various applications in the world of soccer. For example, our model can be used retrospectively to compare the performances of different teams throughout a season. Taking the ongoing 2022 World Cup tournament as an example, we inputted the completed group stage matches for each team into the model, and plotted each team’s performances so far in the tournament. The World Cup dataset used for this section of the project can be found in [file-name]
+
+
+![Underlying performance by team at the 2022 World Cup as of Dec 7, 2022](worldcupscatter.png)
+
+
+As shown in the scatter graph, Brazil, Argentina, and England have been performing the best in terms of predicted goals scored vs predicted goals conceded, which is also shown with each team topping their respective groups. Interestingly, nations such as Australia and Poland have also made it past the group stage, with the model predicting a larger amount of goals against than goals for, which leads us to believe that the two nations could see early exits in the knockout stage. 
+
+Our model can also be utilized as an improved indicator of the strengths of various teams, which would aid in the prediction of future matches. Going into the knockout stages of the World Cup, we tested our model on the Argentina-Netherlands quarterfinals match. In particular, we took each of their data from the group stage and collated each team’s average predicted goals for and predicted goals against. As shown in the table, heading into the highly anticipated matchup, we can see that despite the Netherlands having better statistics in terms of actual goals scored and goals against, Argentina have stronger underlying metrics, which indicate they could edge the match over their opponent. [Note: This prediction was later proven right when Argentina beat the Netherlands in penalties, advancing to the semi-finals]
+
+[arg vs ned table]
+
+With all this being said, our model could be incredibly volatile in its predictions. Due to the low amounts of goals being scored in a match, soccer is an incredibly high-variance game, where teams could win games despite having weaker underlying metrics than their opponents, as explained above. Thus, using data from individual matches can also lead to a high variance in our predictions. The World Cup, in particular, has an even greater factor of randomness. In this tournament format, we have a smaller sample size of each team’s performance, since each team plays at most 7 games. Also, these matches are occurring at a greater intensity, playing every 3-4 days, such that factors including fatigue and team cohesiveness, which are difficult to quantify, also play a larger role in the variability of a team’s overall performance.  
+
+Thus, we believe our model would be better suited to observe outcomes in season-long leagues, rather than shorter-term tournaments. Using a 38-match season, where teams usually play only once or twice a week over the span of 9 months, we would allow the model to make predictions with lower variance. The current model has already been built using seasons of the English Premier League, which allows a better understanding of the underlying metrics behind an average soccer match. But in order to create more accurate predictions, we hope to expand our dataset to various other major leagues around the world, which would incorporate the various different playstyles that are more prevalent in other countries.
+
+As we build on our research, we are interested in different ways of building models that are capable of understanding how underlying statistics affect different outcomes in a soccer match. Despite the performance of our model, we believe that there are also implementations that would provide deeper insight into solving our problem statement. Shot metrics, such as shots on target and shot-creating actions, are highly correlated to the number of goals scored (i.e. the more shots taken the more chances to score goals), as shown by the variable importance chart. Thus, including shot metrics would only cause our model to become too focused on pre-established information, which would not be beneficial to us for understanding other, more latent, factors that relate to the strength of a team, compared to their opponents. To counteract this, it could be better to remove the shot metrics entirely from our dataset to allow the model to make predictions using other statistics of the team’s performance. Another potential solution would be to change our outcome variable to shots on target, rather than goals. This model would allow us to observe the ability of a team to create attacking opportunities, which we can use together with the existing xG model to evaluate the resulting attacking efficiency from those chances.
+
+Another particular method we have come up with is to redesign the dataset used to train our model. Rather than taking statistics from individual matches, which has its shortcomings, as discussed previously, with the effect that ability disparity has on a team’s performance, we want to see how a model would perform if it is provided form-based statistics instead. In this new setup, the variables used would be similar to the dataset used in the current model, but an observation would contain the average statistics of each team from their last 5-10 games. This would allow the model to better interpret the strength comparison between teams in matches, and could potentially lead to better predictions for the amount of chances teams are able to generate depending on their opposition’s level.
+
+Ultimately, we believe that we have created a solid foundation for research into the impact of underlying metrics on a soccer team’s performance, in terms of goal creation. Through this project, there are indications that Machine Learning models can be built to help understand the strengths and shortcomings of intricate tactics used by the best soccer teams in the world. As we continue to explore this topic outside of the scope of this course, we also hope to better our own understanding of the use of data analytics in soccer, continuing to learn and grow with the beautiful game that is loved by billions around the world.
+
+
+## References
+Standard reference section (similar to any term paper)
+
+*2022-2023 Premier League stats. FBref.com. (n.d.). Retrieved December 3, 2022, from https://fbref.com/en/comps/9/Premier-League-Stats
+
+*2021-2022 Premier League stats. FBref.com. (n.d.). Retrieved December 3, 2022, from https://fbref.com/en/comps/9/2021-2022/2021-2022-Premier-League-Stats
+
+*2020-2021 premier league stats. FBref.com. (n.d.).  Retrieved December 3, 2022, from https://fbref.com/en/comps/9/2020-2021/2020-2021-Premier-League-Stats
+
+*2019-2020 Premier League stats. FBref.com. (n.d.). Retrieved December 3, 2022, from https://fbref.com/en/comps/9/2019-2020/2019-2020-Premier-League-Stats
+
+*2018-2019 Premier League stats. FBref.com. (n.d.). Retrieved December 3, 2022, from https://fbref.com/en/comps/9/2018-2019/2019-2019-Premier-League-Stats
+
+*2017-2018 Premier League stats. FBref.com. (n.d.). Retrieved December 3, 2022, from https://fbref.com/en/comps/9/2017-2018/2017-2018-Premier-League-Stats
+
+*2022 World Cup stats. FBref.com. (n.d). Retrieved December 3, 2022, from https://fbref.com/en/comps/1/World-Cup-Stats 
+
+*Gregory, S. (2019, September 24). Expected goals in context. Stats Perform. Retrieved December 3, 2022, from https://www.statsperform.com/resource/expected-goals-in-context/ 
+

@@ -1,0 +1,202 @@
+---
+title: 'QAC385: Project Proposal'
+author: 'Group D: Nelson Lin, Henrick Koo, Edvin Tran Hoac'
+date: '2022-10-20'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r data prep, include=FALSE}
+library(tidyverse)
+df <- read_csv("matches_df.csv")
+# df <- read_csv("~/Documents/QAC385_ML/Project/matches_df.csv")
+
+# df <- df %>%
+#   select(-`Unnamed: 0`)
+df <- df[-c(1,2, 77)]
+```
+
+### Background
+
+In soccer, the outcome of a goal is determined by the number of goals scored by the two teams. However, since there are so few goals scored in a soccer game, the number of goals does not tell the whole story of a game and comes with a large amount of randomness and variability. There is always a chance that a bottom of the table team can beat a stronger team in soccer, since even though the better team will generally play at a higher level, the result of a game can be decided by a few critical moments, for instance, a few lucky, yet critical moments go in the favor of the bottom team, resulting in an underdog victory. But theoretically, if that game was replayed an infinite amount of times, the probability favors the top team more often than the bottom team.
+
+The number of goals scored by a team is often inconsistent from game to game and does not provide any context to how the game was played out. Therefore, people have historically used other statistics to describe a soccer game, such as the percentage of time each team had control of the ball, the number of shots each team has, etc. More recently, a metric called Expected Goals, or xG, has taken the soccer world by storm. It calculates the probability of a shot resulting in a goal based on a number of variables, including shot location, body part of the shot, and goalkeeper location among many others. By adding up the xG values from all shots attempted by a team in a game, one can obtain an expected value of how many goals the team will score in a given match, based on the quality of their scoring chances. Although there still is some pushback on xG from soccer traditionalists, the metric is becoming more and more accepted among the general public and is widely used by professional clubs around the world. [According to Stats Perform](https://www.statsperform.com/resource/expected-goals-in-context/#:~:text=Whereas%20goals%20are%20relatively%20rare,context%20for%20evaluating%20team%20performance.), one of the leading soccer analytics companies, xG is a more consistent measure of performance than goals scored, since it fluctuates much less from game to game.
+
+xG is an incredibly valuable metric, but only takes into account the quality of a team’s scoring opportunities. xG shows us that if a team can consistently create high-quality and quantity shot opportunities and prevent the opposition from doing the same, they will achieve good results over time. However, xG does not provide any context around how a team was able to create good scoring chances. In soccer, there are different playing styles. For instance, some teams base their tactic around controlling the ball, and some teams try to defend deep and counterattack. Metrics like xG do not consider these playing styles. A good team will be put up good xG numbers regardless if they are a possession-heavy or a counter-attacking team because that is what makes them *good* in the first place. But what did these teams do well to allow them to create such good scoring opportunities? This question leads to our **problem statement:**
+
+<br>
+
+*Can we create a consistent team performance measure in soccer that is based on both qualitative and stylistic elements?*
+
+<br>
+
+Such a metric would allow us to compare two teams performing at the same level (i.e similar positions in the league table), in a form that can bridge the gap between traditional and contemporary data analysis. For example, take Liverpool and Manchester City, two of the leading teams in the Premier League over the past few years. Through traditional, visual analysis, we can see that one of Liverpool's biggest strength is their ability to pressure their opponents with high tempo, recover the ball high up the field, and to try and score from advantageous positions, while Manchester City's is to dominate their opponents with a possession heavy, precise passing game. They are both efficient and immensely successful, but they are starkly contrasting ways of playing. While there are metrics that individually represent each leading factor of both team's playstyles, we are aiming to be able to encapsulate these metrics into a more general and rigorous model, capable of analyzing different teams and their tactical setups, or, at least, test the bounds and limitations of Machine Learning in sports analytics.
+
+### Data
+
+##### Data Structure
+
+Each row represents a team's statistics in a given match. In a given match, there will be two observations, one for the home team and one for the away team. Our dataframe currently contains 3800 data point over 74 unique variables taken from the 3800 matches of the past 5 seasons of the English Premier League. The range of variables within the dataframe cover a wide variety of statistics that we can use to analyze a team's match performance, from a team's attacking output (shots on target: sot,  goal creating actions: gca), defensive actions (tackles won: tklw, post shot expected goals: psxg), to other miscellaneous information (referee, yellow cards: crdy).
+
+##### Variable Descriptions (name: description (additional info) [format/type])
+
+    season: Soccer season [yyyy_yyyy]
+    
+    team: Team name [str]
+    
+    date: Date of match [yy-mm-dd] 
+    
+    time: Start time of match [hh-mm-ss] 
+    
+    comp: Soccer league [str]
+    
+    gameweek: Matchweek of season ['Matchweek' 1-38] 
+    
+    day: Day of match [ddd]
+    
+    venue: Home or away game [Home/Away]
+    
+    result: Outcome of game [W/L] 
+    
+    gf: Goals for (scored by team in team var column) [int]
+    
+    ga: Goals against (scored by opponent) [int]
+    
+    opponent: Opposition team [str]
+    
+    xg: Expected goals (includes penalties but not penalty shootout) [float]
+    
+    xga: Expected opposition goals (includes penalties but not penalty shootout) [float]
+    
+    poss: Possession (calculated as the percentage of passes attempted) [int]
+    
+    attendance: Number of fans in attendance [int]
+    
+    captain: Captain of team [str]
+    
+    formation: Formation structure of team [str]
+    
+    referee: Referee officiating the game [str]
+    
+    sh: Number of shots attempted (excluding penalty attempts) [int]
+    
+    sot: Shots on target (excluding penatlies) [int]
+    
+    dist: Average shot distance, in yards, from the opposing goal [float]
+    
+    fk: Shots from free kicks [int]
+    
+    pkscored: Penalty kicks made [int]
+    
+    pkatt: Penalty kicks attempted [int]
+    
+    tkl: Number of players tackled [int]
+    
+    tklw: Tackles where tackler’s team wins the ball [int]
+    
+    tklvsdrb: Tackles won against opponent dribbles [int]
+    
+    attvsdrb: tackles attempted against opponent dribbles [int]
+    
+    press: Number of times pressuring opposing players, who are in possession of the ball [int]
+    
+    succ: Number of times possessions gained within five seconds of applying pressure [int]
+    
+    blocks: Number of times ball is blocked by team [int]
+    
+    inter: Interceptions of passes attempted by the opposing team [int]
+    
+    err: Errors leading to a shot by the opposing team [int]
+    
+    sota: Number of shots on target of goal by opposing team [int]
+    
+    saves: Number of opposing team's shots saved by the goalie [int]
+    
+    psxg: Post-Shot Expected Goals (PSxG: expected goals based on how likely the goalkeeper is to save the shot) [float]
+    
+    pxsg_pm: PSxG - Goals allowed [float]
+    
+    pass_cmp: Passes Completed [int]
+    
+    pass_att: Passes Attempted [int]
+    
+    pass_totdist: Total distance of passes [int]
+    
+    sca: Shot-creating actions (offensive actions directly leading to a shot) [int]
+    
+    sca_passlive: Completed live-ball passes that lead to a shot attempt [int]
+    
+    sca_passdead: Completed dead-ball passes that lead to a shot attempt (i.e. free kicks, corner kicks, kick offs, throw-ins and goal kicks) [int]
+    
+    sca_drib: Successful dribbles in the build up to a shot attempt [int]
+    
+    sca_sh: Shots in the build up to another shot attempt [int]
+    
+    sca_fld: Fouls drawn in the build up to a shot attempt [int]
+    
+    sca_def: Defensive actions in the build up to a shot attempt [int]
+    
+    gca: Goal-creating actions (offensive actions directly leading to a goal, such as passes, dribbles, and drawing fouls) [int]
+    
+    gca_passlive: Completed live passes in the build up to a goal
+    
+    gca_passdead: Completed dead-ball (includes free kicks, corner kicks, kick offs, throw-ins and goal kicks) passes that lead to a goal [int]
+    
+    gca_drib: Dribbles completed in the build up to a goal [int]
+    
+    gca_sh: Shots taken in the build up to a goal [int]
+    
+    gca_fld: Fouls drawn before a goal was scored [int]
+    
+    gca_def: Defensive actions that lead to a goal [int]
+    
+    touches: Total number of touches [int]
+    
+    touches_defthird: Number of touches in the defending third of the pitch [int]
+    
+    touches_attthird: Number of touches in the attacking third of the pitch [int]
+    
+    carries: Total dribbles [int]
+    
+    carries_totdist: Total distance of dribbles [int]
+    
+    carries_progdist: Total distance of progressive dribbles [int]
+    
+    progcarries: Number of progressive (at least 5 yards towards the opponent’s goal) dribbles [int]
+    
+    progpassrec: Number of progressive (at least 5 yards towards the opponent’s goal) passes successfully received [int]
+    
+    crdy: Number of yellow card warnings given [int]
+    
+    crdr: Number of straight red card send offs [int]
+    
+    twocrdy: Number of two card yellow send offs [int]
+    
+    fls: Number of fouls committed [int]
+    
+    fld: Number of fouls given [int]
+    
+    off: Number of times offside [int]
+    
+    recov: Number of loose balls recovered [int]
+    
+    arlWon: Aerial duels won [int]
+    
+    arlLost: Aerial duels lost [int]
+
+```{r sumtable, echo = FALSE, message = FALSE}
+# install.packages("vtable")
+library(vtable)
+
+df %>%
+  select_if(is.numeric) %>%
+
+sumtable()
+```
+
+##### Data Source
+
+Our dataset was collected using resources provided by Sports Reference's [FBREF](https://fbref.com/en/) database, as well as, [StatsBomb](https://www.statsbomb.com/). Our group scraped Premier League statistics of the previous 5 seasons from these websites, and collated the data into one general dataframe for use in our project.
